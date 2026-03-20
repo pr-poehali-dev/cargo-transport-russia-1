@@ -17,6 +17,15 @@ const advantages = [
   { num: "300+", label: "городов России" },
 ];
 
+const reviews = [
+  { name: "Алексей Морозов", company: "ООО «СтройМаш»", city: "Москва", text: "Перевезли станки с завода в Екатеринбург — всё без единой царапины. Машина пришла точно в срок, менеджер был на связи всю дорогу. Работаем уже третий год.", stars: 5 },
+  { name: "Елена Соколова", company: "ИП Соколова", city: "Новосибирск", text: "Заказывала рефрижератор для перевозки кондитерских изделий. Температурный режим выдержан идеально. Цена оказалась ниже, чем у конкурентов. Рекомендую!", stars: 5 },
+  { name: "Дмитрий Павлов", company: "«Техника Плюс»", city: "Санкт-Петербург", text: "Перевезли офис при переезде. Разобрали, упаковали, собрали на месте. Ни один предмет не потерялся. Очень профессиональный подход.", stars: 5 },
+  { name: "Марина Иванова", company: "Сеть магазинов «Уют»", city: "Казань", text: "Сотрудничаем на постоянной основе — каждую неделю возим товар из Москвы. Всегда вовремя, всегда аккуратно. Отличная логистика.", stars: 5 },
+  { name: "Игорь Зайцев", company: "ЗАО «МеталлГрупп»", city: "Челябинск", text: "Нужно было срочно отправить партию металлопроката. Машину подали через 3 часа после звонка. Груз доставлен в целости. Спасибо за оперативность!", stars: 5 },
+  { name: "Светлана Кузнецова", company: "ООО «ФармаЛогист»", city: "Краснодар", text: "Доверяем только ЮЛМИ-ТРАНС для перевозки фармацевтики. Соблюдают все требования по температуре и документации. Работаем уже два года.", stars: 5 },
+];
+
 const perks = [
   { icon: "Zap", title: "Молниеносная подача", desc: "Машина у ваших ворот через 2 часа после заявки в большинстве городов" },
   { icon: "Shield", title: "Страхование груза", desc: "Полное покрытие стоимости груза — без скрытых ограничений" },
@@ -130,7 +139,7 @@ export default function Index() {
           <span className="oswald text-xl font-bold tracking-widest uppercase">ООО ЮЛМИ-ТРАНС</span>
         </div>
         <div className="hidden md:flex items-center gap-8">
-          {[["services", "Услуги"], ["advantages", "Преимущества"], ["order", "Заказать"]].map(([id, label]) => (
+          {[["services", "Услуги"], ["advantages", "Преимущества"], ["reviews", "Отзывы"], ["order", "Заказать"]].map(([id, label]) => (
             <button key={id} onClick={() => scrollTo(id)}
               className="nav-ul relative text-sm text-gray-300 hover:text-white transition-colors uppercase tracking-widest">
               {label}
@@ -323,6 +332,56 @@ export default function Index() {
               <p className="text-gray-600 text-xs text-center">Нажимая кнопку, вы соглашаетесь с политикой обработки данных</p>
             </form>
           )}
+        </div>
+      </section>
+
+      {/* REVIEWS */}
+      <section id="reviews" ref={setRef("reviews")} className="py-24 overflow-hidden"
+        style={{ background: '#0a0a0a' }}>
+        <div className="px-8 md:px-16 lg:px-24 mb-14">
+          <div className={`flex items-center gap-4 mb-4 ${isVisible("reviews") ? "anim-fade-up" : "hide"}`}>
+            <div className="h-px w-12" style={{ background: '#ff6b00' }} />
+            <span className="text-sm uppercase tracking-widest" style={{ color: '#ff6b00' }}>Отзывы клиентов</span>
+          </div>
+          <h2 className={`oswald text-4xl md:text-5xl font-bold uppercase ${isVisible("reviews") ? "anim-fade-up d100" : "hide"}`}>
+            Нам доверяют
+          </h2>
+        </div>
+
+        <div className="relative">
+          <div className="flex gap-6 reviews-track px-8 md:px-16 lg:px-24"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, minmax(320px, 1fr))',
+              gap: '24px',
+            }}>
+            {reviews.map((r, i) => (
+              <div key={i} className={`p-8 flex flex-col gap-4 card-hov ${isVisible("reviews") ? `anim-fade-up` : "hide"}`}
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  animationDelay: `${i * 0.1}s`
+                }}>
+                <div className="flex gap-1">
+                  {Array.from({ length: r.stars }).map((_, j) => (
+                    <Icon key={j} name="Star" size={16} style={{ color: '#ff6b00', fill: '#ff6b00' }} />
+                  ))}
+                </div>
+                <p className="text-gray-300 leading-relaxed flex-1">«{r.text}»</p>
+                <div className="h-px w-full" style={{ background: 'rgba(255,107,0,0.2)' }} />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 flex items-center justify-center oswald font-bold text-white flex-shrink-0"
+                    style={{ background: '#ff6b00', fontSize: '16px' }}>
+                    {r.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-bold text-white text-sm">{r.name}</div>
+                    <div className="text-gray-500 text-xs">{r.company} · {r.city}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
