@@ -127,7 +127,7 @@ export default function Index() {
           <div className="w-8 h-8 flex items-center justify-center" style={{ background: '#ff6b00' }}>
             <Icon name="Truck" size={16} className="text-white" />
           </div>
-          <span className="oswald text-xl font-bold tracking-widest uppercase">ГрузЭкспресс</span>
+          <span className="oswald text-xl font-bold tracking-widest uppercase">ООО ЮЛМИ-ТРАНС</span>
         </div>
         <div className="hidden md:flex items-center gap-8">
           {[["services", "Услуги"], ["advantages", "Преимущества"], ["order", "Заказать"]].map(([id, label]) => (
@@ -335,7 +335,7 @@ export default function Index() {
               <div className="w-8 h-8 flex items-center justify-center" style={{ background: '#ff6b00' }}>
                 <Icon name="Truck" size={16} className="text-white" />
               </div>
-              <span className="oswald text-xl font-bold tracking-widest uppercase">ГрузЭкспресс</span>
+              <span className="oswald text-xl font-bold tracking-widest uppercase">ООО ЮЛМИ-ТРАНС</span>
             </div>
             <p className="text-gray-500 text-sm max-w-xs">Надёжные грузоперевозки по всей России с 2010 года</p>
           </div>
@@ -366,7 +366,7 @@ export default function Index() {
 
         <div className="mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4"
           style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <p className="text-gray-600 text-xs">© 2024 ГрузЭкспресс. Все права защищены.</p>
+          <p className="text-gray-600 text-xs">© 2024 ООО ЮЛМИ-ТРАНС. Все права защищены.</p>
           <div className="overflow-hidden" style={{ opacity: 0.3 }}>
             <div className="road-stripes stripe-bg h-2 w-32 rounded-full" />
           </div>
