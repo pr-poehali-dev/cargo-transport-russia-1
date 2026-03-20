@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 
 const TRUCK_IMG = "https://cdn.poehali.dev/projects/d9af6f2f-c9a4-4eac-9fca-f9a157039e96/files/beb26dd7-d331-4904-afea-0fb17385eb4d.jpg";
+const WAREHOUSE_IMG = "https://cdn.poehali.dev/projects/d9af6f2f-c9a4-4eac-9fca-f9a157039e96/files/5f79d554-2678-4c57-9cd3-f2427717eff9.jpg";
+const FLEET_IMG = "https://cdn.poehali.dev/projects/d9af6f2f-c9a4-4eac-9fca-f9a157039e96/files/25c63b46-243b-4c70-b9f4-a62b69fb7cbf.jpg";
+const HIGHWAY_IMG = "https://cdn.poehali.dev/projects/d9af6f2f-c9a4-4eac-9fca-f9a157039e96/files/69c78269-170c-4036-9868-696aa4c4f9ac.jpg";
+
+const SEND_ORDER_URL = "https://functions.poehali.dev/4f9d2b4a-aed3-41f2-b5ef-7c3e71950b1e";
 
 const services = [
   { icon: "Truck", title: "Сборные грузы", desc: "Объединяем партии от разных отправителей — платите только за свой объём" },
@@ -37,6 +42,7 @@ const perks = [
 export default function Index() {
   const [formData, setFormData] = useState({ from: "", to: "", weight: "", name: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
@@ -68,8 +74,17 @@ export default function Index() {
 
   const isVisible = (id: string) => visibleSections.has(id);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSending(true);
+    try {
+      await fetch(SEND_ORDER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+    } catch (err) { console.error(err); }
+    setSending(false);
     setSubmitted(true);
   };
 
@@ -121,6 +136,8 @@ export default function Index() {
         .inp:focus { outline: none; border-color: #ff6b00; background: rgba(255,107,0,0.05); }
         .stripe-bg { background: repeating-linear-gradient(90deg, rgba(255,107,0,0.8) 0px, rgba(255,107,0,0.8) 40px, transparent 40px, transparent 80px); }
         .oswald { font-family: 'Oswald', sans-serif; }
+        .tg-link { transition: color 0.2s, opacity 0.2s; }
+        .tg-link:hover { opacity: 0.8; }
       `}</style>
 
       {/* NAVIGATION */}
@@ -135,7 +152,9 @@ export default function Index() {
           <div className="w-8 h-8 flex items-center justify-center" style={{ background: '#ff6b00' }}>
             <Icon name="Truck" size={16} className="text-white" />
           </div>
-          <span className="oswald text-xl font-bold tracking-widest uppercase">ЮЛМИ-ТРАНС</span>
+          <span className="oswald text-xl font-bold tracking-widest uppercase">
+            ЮЛМИ-<span style={{ color: '#ff6b00' }}>ТРАНС</span>
+          </span>
         </div>
         <div className="hidden md:flex items-center gap-8">
           {[["services", "Услуги"], ["advantages", "Преимущества"], ["reviews", "Отзывы"], ["order", "Заказать"]].map(([id, label]) => (
@@ -144,6 +163,11 @@ export default function Index() {
               {label}
             </button>
           ))}
+          <a href="https://t.me/Yulmitrans" target="_blank" rel="noopener noreferrer"
+            className="tg-link flex items-center gap-2 text-sm text-gray-300 hover:text-white uppercase tracking-widest">
+            <Icon name="Send" size={14} style={{ color: '#ff6b00' }} />
+            Telegram
+          </a>
         </div>
         <button onClick={() => scrollTo("order")}
           className="pulse-btn text-white text-sm px-6 py-2 uppercase tracking-widest oswald hover:opacity-90 transition-opacity"
@@ -167,11 +191,26 @@ export default function Index() {
 
         <div className="relative z-10 px-8 md:px-16 lg:px-24 pt-24">
           <div className="anim-slide-right">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-4">
               <div className="h-px w-12" style={{ background: '#ff6b00' }} />
               <span className="text-sm uppercase tracking-widest font-medium" style={{ color: '#ff6b00' }}>Грузоперевозки по всей России</span>
             </div>
           </div>
+
+          {/* Телефон и Telegram между заголовком и подзаголовком */}
+          <div className="anim-fade-up flex flex-wrap items-center gap-6 mb-4">
+            <a href="tel:+79128887300"
+              className="tg-link flex items-center gap-2 text-white text-lg font-bold hover:text-orange-400">
+              <Icon name="Phone" size={18} style={{ color: '#ff6b00' }} />
+              8 912 888-73-00
+            </a>
+            <a href="https://t.me/Yulmitrans" target="_blank" rel="noopener noreferrer"
+              className="tg-link flex items-center gap-2 text-white text-lg font-bold hover:text-orange-400">
+              <Icon name="Send" size={18} style={{ color: '#ff6b00' }} />
+              t.me/Yulmitrans
+            </a>
+          </div>
+
           <h1 className="anim-fade-up d100 oswald font-bold leading-none uppercase mb-6"
             style={{ fontSize: 'clamp(60px, 10vw, 120px)' }}>
             <span className="block">Доставим</span>
@@ -187,11 +226,12 @@ export default function Index() {
               style={{ background: '#ff6b00' }}>
               Заказать доставку
             </button>
-            <button onClick={() => scrollTo("services")}
-              className="text-white oswald text-lg px-10 py-4 uppercase tracking-widest transition-all hover:text-orange-400"
+            <a href="https://t.me/Yulmitrans" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-3 text-white oswald text-lg px-10 py-4 uppercase tracking-widest transition-all hover:text-orange-400"
               style={{ border: '1px solid rgba(255,255,255,0.3)' }}>
-              Узнать больше
-            </button>
+              <Icon name="Send" size={18} />
+              Написать в Telegram
+            </a>
           </div>
         </div>
 
@@ -203,6 +243,33 @@ export default function Index() {
                 <div className="text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.8)' }}>{a.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section className="py-16 px-8 md:px-16 lg:px-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="relative overflow-hidden group" style={{ height: '260px' }}>
+            <img src={HIGHWAY_IMG} alt="Автопарк на трассе" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 flex items-end p-6"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+              <span className="oswald text-white text-lg uppercase tracking-widest">Автопарк</span>
+            </div>
+          </div>
+          <div className="relative overflow-hidden group" style={{ height: '260px' }}>
+            <img src={WAREHOUSE_IMG} alt="Складской комплекс" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 flex items-end p-6"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+              <span className="oswald text-white text-lg uppercase tracking-widest">Складирование</span>
+            </div>
+          </div>
+          <div className="relative overflow-hidden group" style={{ height: '260px' }}>
+            <img src={FLEET_IMG} alt="Флот грузовиков" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 flex items-end p-6"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+              <span className="oswald text-white text-lg uppercase tracking-widest">Флот</span>
+            </div>
           </div>
         </div>
       </section>
@@ -323,10 +390,10 @@ export default function Index() {
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
                 </div>
               </div>
-              <button type="submit"
-                className="w-full text-white oswald text-lg py-5 uppercase tracking-widest transition-all hover:opacity-90 active:scale-95 mt-2"
+              <button type="submit" disabled={sending}
+                className="w-full text-white oswald text-lg py-5 uppercase tracking-widest transition-all hover:opacity-90 active:scale-95 mt-2 disabled:opacity-60"
                 style={{ background: '#ff6b00' }}>
-                Рассчитать стоимость →
+                {sending ? 'Отправляем...' : 'Рассчитать стоимость →'}
               </button>
               <p className="text-gray-600 text-xs text-center">Нажимая кнопку, вы соглашаетесь с политикой обработки данных</p>
             </form>
@@ -393,28 +460,35 @@ export default function Index() {
               <div className="w-8 h-8 flex items-center justify-center" style={{ background: '#ff6b00' }}>
                 <Icon name="Truck" size={16} className="text-white" />
               </div>
-              <span className="oswald text-xl font-bold tracking-widest uppercase">ЮЛМИ-ТРАНС</span>
+              <span className="oswald text-xl font-bold tracking-widest uppercase">
+                ЮЛМИ-<span style={{ color: '#ff6b00' }}>ТРАНС</span>
+              </span>
             </div>
             <p className="text-gray-500 text-sm max-w-xs">Надёжные грузоперевозки по всей России с 2010 года</p>
           </div>
 
           <div className={`flex flex-col gap-4 ${isVisible("contacts") ? "anim-fade-up d200" : "hide"}`}>
-            <div className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">
+            <a href="tel:+79128887300" className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors">
               <Icon name="Phone" size={16} style={{ color: '#ff6b00' }} />
               <span>+7 912 888-73-00</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">
+            </a>
+            <a href="tel:+79128884300" className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors">
               <Icon name="Phone" size={16} style={{ color: '#ff6b00' }} />
               <span>+7 912 888-43-00</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">
+            </a>
+            <a href="tel:+79128880042" className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors">
               <Icon name="Phone" size={16} style={{ color: '#ff6b00' }} />
               <span>+7 912 888-00-42</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors cursor-pointer">
+            </a>
+            <a href="https://t.me/Yulmitrans" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors">
+              <Icon name="Send" size={16} style={{ color: '#ff6b00' }} />
+              <span>t.me/Yulmitrans</span>
+            </a>
+            <a href="mailto:yulmitrans@mail.ru" className="flex items-center gap-3 text-gray-400 hover:text-orange-400 transition-colors">
               <Icon name="Mail" size={16} style={{ color: '#ff6b00' }} />
               <span>yulmitrans@mail.ru</span>
-            </div>
+            </a>
             <div className="flex items-center gap-3 text-gray-400">
               <Icon name="Clock" size={16} style={{ color: '#ff6b00' }} />
               <span>Работаем 24/7</span>
